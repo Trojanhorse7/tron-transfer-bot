@@ -1,4 +1,4 @@
-# Tron Blockchain Transfer Bot
+# Tron Blockchain Multisig Transfer Bot
 
 ## Overview
 Tron Transfer Bot To Transfer Out Tron from the given wallet and seedphrase.
@@ -16,8 +16,9 @@ Tron Transfer Bot To Transfer Out Tron from the given wallet and seedphrase.
    ```
 3. Set up environment variables in a `.env` file:
    ```
-      PRIVATE_KEY=your_private_key
-      DESTINATION_ADDRESS=your_private_key
+      PRIVATE_KEY=your_Owner/Signatory_private_key
+      OWNER_ADDRESS=your_address_with_funds
+      API_KEY=your_tron_api_key
    ```
 
 ## Usage

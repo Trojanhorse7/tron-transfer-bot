@@ -1,16 +1,17 @@
+const { sign } = require("@noble/secp256k1");
 const TronWeb = require("tronweb");
 require("dotenv").config();
 
-const walletAddress = TronWeb.address.fromPrivateKey(process.env.PRIVATE_KEY); // Wallet address from private key
-const withdrawalAddress = process.env.DESTINATION_ADDRESS; // Address to withdraw TRX to
+const withdrawalAddress = TronWeb.address.fromPrivateKey(process.env.PRIVATE_KEY); // Address to withdraw TRX
+const walletAddress = process.env.OWNER_ADDRESS; // Wallet Address with Trx
 
 const tronWeb = new TronWeb({
-    fullHost: "https://api.shasta.trongrid.io", // RPC NODE
-    privateKey: process.env.PRIVATE_KEY, 
+    fullHost: "https://api.trongrid.io", // RPC NODE -
+    headers: { "TRON-PRO-API-KEY": process.env.API_KEY },
 });
 
 // Minimum balance to keep
-const MIN_BALANCE_THRESHOLD = 0.1 * 1e6; // 0.1 TRX in SUN
+const MIN_BALANCE_THRESHOLD = 0.2 * 1e6; // 0.1 TRX in SUN
 
 // Function to estimate bandwidth usage
 function estimateBandwidth(signedTransaction) {
@@ -42,13 +43,14 @@ async function checkAndWithdraw() {
             const transaction = await tronWeb.transactionBuilder.sendTrx(
                 withdrawalAddress,
                 balance,
-                walletAddress
+                walletAddress,
             );
-            const signedTransaction = await tronWeb.trx.sign(transaction);
+
+            const signedTransaction = await tronWeb.trx.multiSign(transaction, process.env.PRIVATE_KEY);
 
             // Estimate bandwidth and calculate transaction fee in TRX
             const bandwidth = estimateBandwidth(signedTransaction);
-            const feeInTRX = (bandwidth * 0.001) + 0.02; // Fee in TRX
+            const feeInTRX = (bandwidth * 0.001) + 0.03; // Fee in TRX
             console.log(`Transaction fee: ${feeInTRX.toFixed(6)} TRX`);
 
             // Adjust the amount to send after deducting fees
@@ -63,7 +65,7 @@ async function checkAndWithdraw() {
                     walletAddress
                 );
 
-                const signedAdjustedTransaction = await tronWeb.trx.sign(adjustedTransaction);
+                const signedAdjustedTransaction = await tronWeb.trx.multiSign(adjustedTransaction, process.env.PRIVATE_KEY);
                 const receipt = await tronWeb.trx.sendRawTransaction(signedAdjustedTransaction);
 
                 if (receipt.result) {
