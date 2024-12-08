@@ -1,0 +1,19 @@
+{
+  "name": "tron-transfer-bot",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@noble/secp256k1": "^1.7.1",
+    "axios": "^1.7.4",
+    "dotenv": "^16.4.5",
+    "tronweb": "^5.3.2"
+  }
+}
